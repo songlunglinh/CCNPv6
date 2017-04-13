@@ -28,6 +28,11 @@ ip add 10.100.12.1 255.255.255.252
 no shutdown
 clock rate 128000
 bandwidth 128
+exit
+router rip
+version 2
+network 10.0.0.0
+no auto-summary
 end
 copy r s
 
@@ -59,6 +64,11 @@ int s0/0/0
 ip add 10.100.12.2 255.255.255.252
 no shutdown
 bandwidth 128
+exit
+router rip
+version 2
+network 10.0.0.0
+no auto-summary
 end
 copy r s
 
@@ -77,5 +87,7 @@ R2(tcl)#foreach address {
 +>(tcl)#} {
 +>(tcl)#ping $address
 +>(tcl)#}
+
+R1#:show ip protocols
 
 -------------------------------------------END__CCNPv6_ROUTE_Lab-1_TCL_Scripts_Student__END----------------------------------------------------
