@@ -1,0 +1,81 @@
+-------------------------------------------START__CCNPv6_ROUTE_Lab-1_TCL_Scripts_Student__START----------------------------------------------------
+------------------------------------------------------CONFIG R1----------------------------------------------------------------------
+en
+config t
+hostname R1
+enable secret darkness
+line con 0
+password hntu
+login
+line vty 0 4
+password hntu
+login
+exit
+int loopback 1
+ip add 10.1.1.1 255.255.255.252
+exit
+int loopback 2
+ip add 10.1.2.1 255.255.255.252
+exit
+int loopback 3
+ip add 10.1.3.1 255.255.255.252
+exit
+int loopback 4
+ip add 10.1.4.1 255.255.255.252
+exit
+int s0/0/0
+ip add 10.100.12.1 255.255.255.252
+no shutdown
+clock rate 128000
+bandwidth 128
+end
+copy r s
+
+------------------------------------------------------CONFIG R2----------------------------------------------------------------------
+en
+config t
+hostname R2
+enable secret darkness
+line con 0
+password hntu
+login
+line vty 0 4
+password hntu
+login
+exit
+int loopback 1
+ip add 10.2.1.1 255.255.255.252
+exit
+int loopback 2
+ip add 10.2.2.1 255.255.255.252
+exit
+int loopback 3
+ip add 10.2.3.1 255.255.255.252
+exit
+int loopback 4
+ip add 10.2.4.1 255.255.255.252
+exit
+int s0/0/0
+ip add 10.100.12.2 255.255.255.252
+no shutdown
+bandwidth 128
+end
+copy r s
+
+R2#:tclsh
+R2(tcl)#foreach address {
++>(tcl)#10.1.1.1
++>(tcl)#10.1.2.1
++>(tcl)#10.1.3.1
++>(tcl)#10.1.4.1
++>(tcl)#10.100.12.1
++>(tcl)#10.2.1.1
++>(tcl)#10.2.2.1
++>(tcl)#10.2.3.1
++>(tcl)#10.2.4.1
++>(tcl)#10.100.12.2
++>(tcl)#} {
++>(tcl)#ping $address
++>(tcl)#}
+
+-------------------------------------------END__CCNPv6_ROUTE_Lab-1_TCL_Scripts_Student__END----------------------------------------------------
