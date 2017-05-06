@@ -1,0 +1,181 @@
+//config HQ
+int loopback 1
+ip add 10.1.1.1 255.255.224.0
+exit
+int loopback 33
+ip add 10.1.33.1 255.255.224.0
+exit
+int loopback 65
+ip add 10.1.65.1 255.255.224.0
+exit
+int loopback 97
+ip add 10.1.97.1 255.255.224.0
+exit
+int loopback 129
+ip add 10.1.129.1 255.255.224.0
+exit
+int loopback 161
+ip add 10.1.161.1 255.255.224.0
+exit
+
+//config EAST
+
+int loopback 1
+ip add 10.2.1.1 255.255.224.0
+exit
+int loopback 33
+ip add 10.2.33.1 255.255.224.0
+exit
+int loopback 65
+ip add 10.2.65.1 255.255.224.0
+exit
+int loopback 97
+ip add 10.2.97.1 255.255.224.0
+exit
+int loopback 129
+ip add 10.2.129.1 255.255.224.0
+exit
+int loopback 161
+ip add 10.2.161.1 255.255.224.0
+exit
+
+//Config WEST
+int loopback 1
+ip add 10.3.1.1 255.255.224.0
+exit
+int loopback 33
+ip add 10.3.33.1 255.255.224.0
+exit
+int loopback 65
+ip add 10.3.65.1 255.255.224.0
+exit
+int loopback 97
+ip add 10.3.97.1 255.255.224.0
+exit
+int loopback 129
+ip add 10.3.129.1 255.255.224.0
+exit
+int loopback 161
+ip add 10.3.161.1 255.255.224.0
+exit
+
+//Config FRS
+frame-relay switching
+int s0/0
+description FR to HQ
+no ip address
+encapsulation frame-relay ietf
+clock rate 128000
+frame-relay lmi-type cisco
+frame-relay intf-type dce
+frame-relay route 102 int s0/1 201
+frame-relay route 103 int s1/0 301
+no shutdown
+int s0/1
+description FR to EAST
+no ip address
+encapsulation frame-relay ietf
+frame-relay lmi-type cisco
+frame-relay intf-type dce
+frame-relay route 201 int s0/0 102
+no shutdown
+
+int s1/0
+description FR to WEST
+no ip address
+encapsulation frame-relay ietf
+clock rate 64000
+frame-relay lmi-type cisco
+frame-relay intf-type dce
+frame-relay route 301 int s0/0 103
+no shutdown
+
+//Config HQ
+int s0/1
+ip add 172.16.124.1 255.255.255.248
+encapsulation frame-relay ietf
+no frame-relay inverse-arp
+frame-relay map ip 172.16.124.2 102 broadcast
+frame-relay map ip 172.16.124.3 103 broadcast
+no shutdown
+
+//Config EAST
+int s0/1
+ip add 172.16.124.2 255.255.255.248
+clock rate 64000
+encapsulation frame-relay ietf
+no frame-relay inverse-arp
+frame-relay map ip 172.16.124.1 201 broadcast
+frame-relay map ip 172.16.124.3 201 broadcast
+no shutdown
+
+//Config WEST
+int s0/0
+ip add 172.16.124.3 255.255.255.248
+encapsulation frame-relay ietf
+no frame-relay inverse-arp
+frame-relay map ip 172.16.124.1 301 broadcast
+frame-relay map ip 172.16.124.2 301 broadcast
+no shutdown
+
+//Config HQ
+int s0/1
+frame-relay map ip 172.16.124.1 102
+
+//Config EAST
+int s0/1
+frame-relay map ip 172.16.124.2 201
+
+//Config WEST
+int s0/0
+frame-relay map ip 172.16.124.3 301
+
+//Conifg HQ
+int s0/1
+bandwidth 128
+
+//Config EAST
+int s0/1
+bandwidth 64
+
+//Config WEST
+int s0/0
+bandwidth 64
+
+//Config HQ
+ip bandwidth-percent eigrp 1 40
+
+//Config HQ
+router eigrp 1
+network 10.0.0.0
+network 172.16.0.0
+no auto-summary
+
+//Config EAST
+router eigrp 1
+network 10.0.0.0
+network 172.16.0.0
+no auto-summary
+
+//Config WEST
+router eigrp 1
+network 10.0.0.0
+network 172.16.0.0
+no auto-summary
+
+//Config HQ
+int s0/1
+no ip split-horizon eigrp 1
+
+//Config HQ
+router eigrp 1
+neighbor 172.16.124.2 s0/1
+neighbor 172.16.124.3 s0/1
+
+//Config EAST
+router eigrp 1
+neighbor 172.16.124.1 s0/1
+
+//Config WEST
+router eigrp 1
+neighbor 172.16.124.1 s0/0
