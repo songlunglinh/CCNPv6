@@ -1,0 +1,152 @@
+//Config R1
+int s0/0
+ip add 172.16.12.1 255.255.255.248
+clock rate 64000
+bandwidth 64
+no shutdown
+exit
+
+int fa0/0
+ip add 10.1.1.1 255.255.255.0
+no shutdown
+exit
+int s0/1
+ip add 172.16.13.1 255.255.255.248
+bandwidth 64
+exit
+int loopback 1
+ip add 192.168.1.1 255.255.255.0
+
+//Config R2
+int s0/0
+ip add 172.16.12.2 255.255.255.248
+no shutdown
+bandwidth 64
+exit
+int fa0/0
+ip add 10.1.1.2 255.255.255.0
+exit
+int s0/1
+ip add 172.16.23.2 255.255.255.248
+clock rate 64000
+bandwidth 64
+no shutdown
+exit
+int loopback 2
+ip add 192.168.2.2 255.255.255.0
+
+//Config R3
+int s0/1
+ip add 172.16.23.3 255.255.255.248
+bandwidth 64
+no shutdown
+exit
+int fa0/0
+ip add 10.1.1.3 255.255.255.0
+no shutdown
+exit
+int s0/0
+ip add 172.16.13.3 255.255.255.248
+clock rate 64000
+bandwidth 64
+no shutdown
+exit
+int loopback 192.168.3.3 255.255.255.0
+exit
+
+//Config R1
+router eigrp 1
+network 10.0.0.0
+network 192.168.1.0
+network 172.16.0.0
+
+//Config R2
+router eigrp 1
+network 10.0.0.0
+network 192.168.2.0
+network 172.16.0.0
+
+//Config R3
+router eigrp 1
+network 10.0.0.0
+network 192.168.3.0
+network 172.16.0.0
+
+//Config R1
+key chain EIGRP-KEYS
+key 1
+key-string cisco
+
+//Config R2
+key chain EIGRP-KEYS
+key 1
+key-string cisco
+
+//Config R3
+key chain EIGRP-KEYS
+key 1
+key-string cisco
+
+
+//Config R1
+int s0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int s0/1
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int fa0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+
+//Config R2
+int s0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int s0/1
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int fa0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+
+//Config R3
+int s0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int s0/1
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+int fa0/0
+ip authentication key-chain eigrp 1 EIGRP-KEYS
+ip authentication mode eigrp 1 md5
+
+//Config R1
+int s0/0
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+
+//Config R2
+int s0/0
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+
+
+//Config R1
+int s0/1
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+
+//Config R2
+int s0/1
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+
+//Config R3
+int s0/0
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+int s0/1
+ip hello-interval eigrp 1 2
+ip hold-time eigrp 1 8
+
