@@ -1,0 +1,106 @@
+//Config R1
+conf t
+int loopback 11
+ip add 10.1.1.1 255.255.255.252
+exit
+int loopback 15
+ip add 10.1.1.5 255.255.255.252
+exit
+int loopback 19
+ip add 10.1.1.9 255.255.255.252
+exit
+
+
+//Config R2
+conf t
+int loopback 21
+ip add 10.1.2.1 255.255.255.252
+exit
+int loopback 25
+ip add 10.1.2.5 255.255.255.252
+exit
+int loopback 29
+ip add 10.1.2.9 255.255.255.252
+exit
+
+//Config R3
+conf t
+int loopback 31
+ip add 10.1.3.1 255.255.255.252
+exit
+int loopback 35
+ip add 10.1.3.5 255.255.255.252
+exit
+int loopback 39
+ip add 10.1.3.9 255.255.255.252
+exit
+
+
+//Config R1
+int s0/0
+description R1-->R2
+clock rate 64000
+bandwidth 64
+ip address 10.1.102.1 255.255.255.248
+no shutdown
+exit
+int s0/1
+description R1-->R3
+bandwidth 64
+ip address 10.1.103.1 255.255.255.248
+no shutdown
+exit
+
+//Config R2
+int s0/0
+description R2-->R1
+bandwidth 64
+ip address 10.1.102.2 255.255.255.248
+no shutdown
+exit
+int s0/1
+description R2-->R3
+clock rate 64000
+bandwidth 64
+ip add 10.1.203.2 255.255.255.248
+no shutdown
+exit
+
+//Config R3
+int s0/0
+description R3-->R1
+clock rate 64000
+bandwidth 64
+ip add 10.1.103.3 255.255.255.248
+no shutdown
+exit
+int s0/1
+description R3-->R2
+bandwidth 64
+ip add 10.1.203.3 255.255.255.248
+no shutdown
+
+//Config Route EIGRP
+router eigrp 100
+network 10.0.0.0
+
+tclsh
+
+foreach address {
+10.1.1.1
+10.1.1.5
+10.1.1.9
+10.1.2.1
+10.1.2.5
+10.1.2.9
+10.1.3.1
+10.1.3.5
+10.1.3.9
+10.1.102.1
+10.1.102.2
+10.1.103.1
+10.1.103.3
+10.1.203.2
+10.1.203.3
+} { ping $address }
+
