@@ -1,4 +1,7 @@
-//Conf Router1
+## Step 1: Configure initial settings.
+copy and paster the following initial configurations for R1 and R2
+#### Conf Router1
+hostname R1 
 int loopback 1
 ip add 10.1.1.1 255.255.255.252
 exit
@@ -20,8 +23,9 @@ router rip
 version 2
 network 10.0.0.0
 no auto-summary
-//Config Router2
 
+#### Config Router2
+hostname R2
 int loopback 1
 ip add 10.2.1.1 255.255.255.252
 exit
@@ -42,3 +46,41 @@ router rip
 version 2
 network 10.0.0.0
 no auto-summary
+
+## Step 2: Verify connectivity.
+R1# ping 10.1.1.1
+
+## Step 3: Create and execute a Tcl script
+//Config R1
+tclsh
+foreach address {
+10.1.1.1
+10.1.2.1
+10.1.3.1
+10.1.4.1
+10.100.12.1
+10.2.1.1
+10.2.2.1
+10.2.3.1
+10.2.4.1
+10.100.12.2 
+} {
+ping $address
+}
+
+//Config
+tclsh
+foreach address {
+10.1.1.1
+10.1.2.1
+10.1.3.1
+10.1.4.1
+10.100.12.1
+10.2.1.1
+10.2.2.1 
+10.2.3.1 
+10.2.4.1
+10.100.100.12.2     
+} {
+ping $address
+}
